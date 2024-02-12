@@ -1,0 +1,8 @@
+{
+  "name": "Incubyte-TDD-Assessment",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/bhavya3024/Incubyte-TDD-Assessment.git",
+  "author": "Bhavya Dhiman <bhavyadhiman7@gmail.com>",
+  "license": "MIT"
+}
