@@ -13,6 +13,12 @@ class StringCalculator {
         })
     }
 
+    checkIfStringEndsWithNumber(string = '') {
+        if (string !== '' && string.endsWith('\n') || string.endsWith(this.delimeter)) {
+            throw new Error('String should end with a number!');
+        }
+    }
+
     checkIfStringIsEmptyBetweenTwoDelimeters(string = '') {
         string.split(this.delimeter).forEach(stringItem => {
            if (stringItem === '') {
@@ -22,11 +28,15 @@ class StringCalculator {
     }
 
     checkIfStringContainsNegativeNumbers(string = '') {
+        let negativeNumbers = [];
         string.split(this.delimeter).forEach(stringItem => {
             if (Number(stringItem) < 0) {
-                throw new Error('String should contain only positive numbers!');
+                negativeNumbers.push(stringItem);
             }
-        })
+        });
+        if (negativeNumbers.length) {
+            throw new Error(`negative numbers are not allowed: ${negativeNumbers.join(',')}`);
+        }
     }
 
 
@@ -35,6 +45,7 @@ class StringCalculator {
        if (typeof string !== 'string') {
           throw new Error('The input type must be string');
        }
+       this.checkIfStringEndsWithNumber(string);
        this.checkIfStringContainsNumbersOnly(string);
        this.checkIfStringContainsNegativeNumbers(string);
     }
@@ -54,7 +65,7 @@ const stringCalculatorClientFunction = (string) => {
     const client = new StringCalculator(string);
     console.log(client.addNumbersInString(string));
    } catch (error) {
-      console.log('ERROR', error.message);
+      console.log(`ERROR in ${string}:`, error.message);
    }
 }
 
@@ -64,9 +75,10 @@ stringCalculatorClientFunction('1,2,3,4');
 stringCalculatorClientFunction('1,2,3,a');
 stringCalculatorClientFunction('1,2,,4');
 stringCalculatorClientFunction('12,13,14,15');
-stringCalculatorClientFunction('12,13,-14,15');
+stringCalculatorClientFunction('12,13,-14,15,-16');
 stringCalculatorClientFunction(null);
 stringCalculatorClientFunction(undefined);
 stringCalculatorClientFunction(false);
 stringCalculatorClientFunction('1,2,3\n4,5,6\n7,8,9');
-stringCalculatorClientFunction('1,\n');
+stringCalculatorClientFunction('1,2,\n');
+stringCalculatorClientFunction('1,2,');
