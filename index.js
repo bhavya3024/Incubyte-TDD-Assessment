@@ -20,12 +20,13 @@ export default class StringCalculator {
         let stringWithoutAdditionalDelimeters = string;
         if (string.startsWith('//')) {
             this.delimeters = [];
-            const delimeterItemsString = string.substring(0, string.indexOf('\n'));
-            if (!delimeterItemsString.endsWith(']') || delimeterItemsString.startsWith('[')) {
+            let delimeterItemsString = string.substring(2);
+            delimeterItemsString = delimeterItemsString.substring(0, string.indexOf('\n') - 2);
+            if (!(delimeterItemsString.endsWith(']') && delimeterItemsString.startsWith('['))) {
                 throw new Error('Delimeter string should start and end with square brackets');
             }
             stringWithoutAdditionalDelimeters = string.substring(string.indexOf('\n') + 1);
-            const delimeterArray = delimeterItemsString.substring(2).split(']['); // ][ will be removed automatically
+            const delimeterArray = delimeterItemsString.split(']['); // ][ will be removed automatically
             delimeterArray.forEach((delimeter, index) => {
                 if (index === 0 && delimeter.startsWith('[')) { // remove first "[" in first element
                     delimeter = delimeter.replace('[', '');
@@ -90,4 +91,3 @@ export default class StringCalculator {
         return this.dimenstionalString.split(',').reduce((a, b) => parseInt(a) + parseInt(b) || 0, 0);
     }
 }
-

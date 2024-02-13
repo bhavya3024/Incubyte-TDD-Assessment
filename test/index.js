@@ -80,7 +80,7 @@ describe('StringCalculator', () => {
 
         // Empty string between custom delimiters
         it('should throw an error for empty string between custom delimiters', () => {
-            expect(() => new StringCalculator('//[,,][+][*]\n1,2,3,4,5+6+7+8*9*10*').to.throw('String contains invalid delimeters!'));
+            expect(() => new StringCalculator('//[,,][+][*]\n1,2,3,4,5+6+7+8*9*10*').to.throw('String contains invali delimeters!'));
         });
 
         it('should calculate sum for valid delimeters including multiple delimeter length', () => {
@@ -92,6 +92,22 @@ describe('StringCalculator', () => {
             const calculator = new StringCalculator('//[88][+][*]\n1882883884885+6+7+8*9*108811');
             expect(calculator.calculateSum()).to.equal(66);
         });
+
+        it('should throw an error for invalid supported delimeter structure', () => {
+             expect(() => new StringCalculator('//[,,][+][*\n1,2,3,4,5+6+7+8*9*10*11')).to.throw('Delimeter string should start and end with square brackets');
+             expect(() => new StringCalculator('//,,][+][*]\n1,2,3,4,5+6+7+8*9*10*11')).to.throw('Delimeter string should start and end with square brackets');
+        });
+
+
+        it('should calculate sum if a square bracket(s) comes in supported delimeters', () => {
+            expect(new StringCalculator('//[,]][+][*]\n1,]2,]3,]4,]5+6+7+8*9*10*11').calculateSum()).to.equal(66);
+            expect(new StringCalculator('//[[]][+][*]\n1[]2[]3[]4[]5+6+7+8*9*10*11').calculateSum()).to.equal(66);
+            expect(new StringCalculator('//[[]]][+][*]\n1[]]2[]]3[]]4[]]5+6+7+8*9*10*11').calculateSum()).to.equal(66);
+            expect(new StringCalculator('//[[,]][+][*]\n1[,]2[,]3[,]4[,]5+6+7+8*9*10*11').calculateSum()).to.equal(66);
+
+
+
+       });
     });
 });
 
