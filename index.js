@@ -5,10 +5,6 @@ export default class StringCalculator {
         this.string = string || '';
     }
 
-    checkIfStringContainsNumber(str = '') {
-        return /\d/.test(str);
-    }
-
     checkIfStringContainsNumbersOnly(str = '') {
         return /^[0-9]+$/.test(str);
     }
