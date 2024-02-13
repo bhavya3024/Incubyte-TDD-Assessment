@@ -1,8 +1,16 @@
-class StringCalculator {
-    constructor(string = '') {
+export default class StringCalculator {
+    constructor(string) {
         this.delimeters = [','];
-        this.dimensionalStringSplit = this.validateString(string);
+        this.dimenstionalString = string !== '' ? this.validateString(string) : ''; // string formed by multiple splits if there are more than one delimeter
         this.string = string || '';
+    }
+
+    checkIfStringContainsNumber(str = '') {
+        return /\d/.test(str);
+    }
+
+    checkIfStringContainsNumbersOnly(str = '') {
+        return /^[0-9]+$/.test(str);
     }
 
     processDelimiter(string, index = 0) {
@@ -12,19 +20,7 @@ class StringCalculator {
         return string.split(this.delimeters[index]).map(s => this.processDelimiter(s, index + 1));
     }
 
-    checkIfStringContainsNegativeNumbers(string = '') {
-        let negativeNumbers = [];
-        string.split(this.delimeters).forEach(stringItem => {
-            if (Number(stringItem) < 0) {
-                negativeNumbers.push(stringItem);
-            }
-        });
-        if (negativeNumbers.length) {
-            throw new Error(`negative numbers are not allowed: ${negativeNumbers.join(',')}`);
-        }
-    }
-
-    validateAndReplaceDelimeterFromTheString(string = '') {
+    validateAndReplaceDelimeterFromTheString(string) {
         let stringWithoutAdditionalDelimeters = string;
         if (string.startsWith('//')) {
             this.delimeters = [];
@@ -47,37 +43,24 @@ class StringCalculator {
         return stringWithoutAdditionalDelimeters;
     }
 
-    checkIfStringContainsValidDelimeters(string = '') {
-        for (let stringIndex = 0; stringIndex < string.length; stringIndex += 1) {
-            if (isNaN(string.charAt(stringIndex))) {
-                let delimeterFound = false;
-                for (const delimeter of this.delimeters) {
-                    let substringIndex = stringIndex;
-                    let substring = string.substring(substringIndex, substringIndex + 1);
-                    while (delimeter.startsWith(substring) && substring.length < delimeter.length) {
-                        substringIndex++;
-                        const newSubstring = string.substring(substringIndex, substringIndex + 1);
-                        if (newSubstring === '') {
-                            break;
-                        }
-                        substring += string.substring(substringIndex, substringIndex + 1);
-                    }
-                    console.log('DELIMETER: ', delimeter, ' SUBSTRING: ', substring);
-                    if (delimeter === substring) {
-                        delimeterFound = true;
-                    }
-                }
-                if (!delimeterFound) {
-                    throw new Error('Unsupported delimeter found!');
-                }
-            }
+    checkIfStringContainsValidDelimeters(string) {
+        let modifiedString = string;
+        for (const delimeter of this.delimeters) {
+            modifiedString = modifiedString.split(delimeter).join('');
+        }
+        if (modifiedString.includes('/s')) {
+            throw new Error('String contains invalid delimeters!');
+        }
+        if (!this.delimeters.includes('-')) { // if "-" is not a delimeter, it is a -ve sign, so we have to replace it! 
+            modifiedString = modifiedString.replace(/-/g, '');
+        }
+        modifiedString = modifiedString.replace(/\n/g, ''); // replace /n with empty string
+        if (!this.checkIfStringContainsNumbersOnly(modifiedString)) {
+            throw new Error('String contains invalid delimeters!');
         }
     }
 
-
-
-
-    validateString(string = '') {
+    validateString(string) {
         if (typeof string !== 'string') {
             throw new Error('The input type must be string');
         }
@@ -94,7 +77,7 @@ class StringCalculator {
                 throw new Error('String should end with a number!');
             }
             if (stringItem === '' && stringFormedByMultiDimensionSplit.length) {
-                throw new Error('Between delimeters, string should not be empty');
+                throw new Error('Number should be present across the delimeter');
             }
             if (Number(stringItem) < 0) {
                 negativeNumbers.push(stringItem);
@@ -108,37 +91,7 @@ class StringCalculator {
 
 
     calculateSum() {
-        return this.dimensionalStringSplit.split(',').reduce((a, b) => parseInt(a) + parseInt(b) || 0, 0);
+        return this.dimenstionalString.split(',').reduce((a, b) => parseInt(a) + parseInt(b) || 0, 0);
     }
 }
-
-const stringCalculatorClientFunction = (string) => {
-    try {
-        const client = new StringCalculator(string);
-        console.log(client.calculateSum(string));
-    } catch (error) {
-        console.log(`ERROR in ${string}:`, error.message);
-    }
-}
-
-
-// stringCalculatorClientFunction('');
-// stringCalculatorClientFunction('1,2,3,4');
-// stringCalculatorClientFunction('1,2,3,a');
-// stringCalculatorClientFunction('1,2,,4');
-// stringCalculatorClientFunction('12,13,14,15');
-// stringCalculatorClientFunction('12,13,-14,15,-16');
-// stringCalculatorClientFunction(null);
-// stringCalculatorClientFunction(undefined);
-// stringCalculatorClientFunction(false);
-// stringCalculatorClientFunction('1,2,3\n4');
-// stringCalculatorClientFunction('1,2,\n');
-// stringCalculatorClientFunction('1,2,');
-// stringCalculatorClientFunction('1,2,3,4,5+6+7+8*9*10*11\n12,13,14+15');
-// stringCalculatorClientFunction('//[,][+][*]\n1,2,3,4,5+6+7+8*9*10*11\n12,13,14+15');
-// stringCalculatorClientFunction('//[,][*]\n1,2,3,4,5+6+7+8*9*10*11\n12,13,14+15');
-// stringCalculatorClientFunction('//[,][+][*]\n1,2,3,4,5+6+7+-8*9*10*11\n12,13,14+15');
-// stringCalculatorClientFunction('//[,][+][*]1,2,3,4,5+6+7+8*9*10*11\n12,13,14+15');
-// stringCalculatorClientFunction('//[,,][+][*]\n1,2,3,4,5+6+7+8*9*10*11\n12,13,14+15');
-stringCalculatorClientFunction('//[,,][+][*]\n1,,2,,3,,4,,5+6+7+8*9*10*11\n12,,13,,14+15');
 

@@ -1,8 +1,16 @@
 {
-  "name": "Incubyte-TDD-Assessment",
+  "name": "incubyte-tdd-assessment",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "repository": "https://github.com/bhavya3024/Incubyte-TDD-Assessment.git",
   "author": "Bhavya Dhiman <bhavyadhiman7@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+     "test": "mocha"
+  },
+  "dependencies": {
+    "chai": "^5.1.0",
+    "mocha": "^10.3.0"
+  }
 }
